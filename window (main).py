@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import *
 #from PlaneTracker_2 import planeInfo
+from EncryptUnecryptData import *
+from LoginAuthenticationSystem import *
 
 
-window = tk.Tk()
-window.geometry("1280x720")
+
 
 #example
 def plane_tracking_labels(flightdate, flightstatus, departure, airport, timezone, terminal, gate, delay, scheduled, estimated, arrivaldestination, timezone2, terminal2, gate2):
@@ -75,13 +76,14 @@ def weather_labels(country):
     Description = Label(window, text= f"Description: {weather(api_key, country, 3)}")
     Description.pack()
 
-    security(f"Weather in {weather(api_key, country, 1)}:")
-    security(f"Temperature: {weather(api_key, country, 2)} °C ")
-    security(f"Description: {weather(api_key, country, 3)}")
+    encryptdata(f"Weather in {weather(api_key, country, 1)}:")
+    encryptdata(f"Temperature: {weather(api_key, country, 2)} °C ")
+    encryptdata(f"Description: {weather(api_key, country, 3)}")
 
-def security(data):
-    from Security import *
+    save = Button(window, text="save information", command=lambda: encryptdata)
+    save.pack()
 
+def encryptdata(data):
     hashdata(data)
 
 
@@ -89,12 +91,18 @@ def security(data):
 
 # flightdate, flightstatus, departure, airport, timezone, terminal, gate, delay, scheduled, estimated, arrivaldestination, airport2, timezone2, terminal2, gate2
 #example
+
+from LoginAuthenticationSystem import window,login
+login_window = window()
+
+window = tk.Tk()
+window.geometry("1280x720")
+
 plane_tracking_labels("2024-04-01", "scheduled", "departure:", "airport: Heathrow", "timezone: Europe/London", "terminal: 3", "gate : 7", "delay : 76",
        "scheduled: 2024-04-01T14:20:00+00:00", "estimated: 2024-04-01T14:20:00+00:00", "airport: Dubai", "timezone: Asia/Dubai", "terminal: 3", "gate: None")
 
 weather_labels("England")
 
-save = Button(window, text="save information", command = lambda: security)
-save.pack()
+
 
 window.mainloop()
