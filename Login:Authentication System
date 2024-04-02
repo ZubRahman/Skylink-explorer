@@ -1,0 +1,53 @@
+import paho.mqtt.client as mqtt
+import json
+
+# Define MQTT broker details
+broker_address = "mqtt.example.com"
+broker_port = 1883
+username = "your_username"
+password = "your_password"
+
+# Define topics
+auth_topic = "plane/auth"
+tracking_topic = "plane/tracking"
+
+# Function to handle connection to MQTT broker
+def on_connect(client, userdata, flags, rc):
+    print("Connected to MQTT broker with result code "+str(rc))
+    # Subscribe to topics
+    client.subscribe(auth_topic)
+    client.subscribe(tracking_topic)
+
+# Function to handle receiving messages from MQTT broker
+def on_message(client, userdata, msg):
+    print("Received message: "+msg.topic+" "+str(msg.payload.decode()))
+    # Process message based on topic
+    if msg.topic == auth_topic:
+        handle_authorization(msg.payload)
+    elif msg.topic == tracking_topic:
+        handle_tracking(msg.payload)
+
+# Function to handle plane authorization
+def handle_authorization(payload):
+    data = json.loads(payload)
+    if data["authorized"]:
+        print("Plane {} authorized for flight.".format(data["plane_id"]))
+    else:
+        print("Unauthorized access for plane {}.".format(data["plane_id"]))
+
+# Function to handle plane tracking
+def handle_tracking(payload):
+    data = json.loads(payload)
+    print("Plane {} current location: Latitude {}, Longitude {}".format(data["plane_id"], data["latitude"], data["longitude"]))
+
+# Initialize MQTT client
+client = mqtt.Client()
+client.username_pw_set(username, password)
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to MQTT broker
+client.connect(broker_address, broker_port)
+
+# Start the MQTT client loop
+client.loop_forever()
