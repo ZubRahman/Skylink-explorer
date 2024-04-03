@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import *
 #from PlaneTracker_2 import planeInfo
-from EncryptUnecryptData import *
 from LoginAuthenticationSystem import *
 import requests
 import folium
@@ -16,7 +15,7 @@ def plane_tracking_labels(flightDetails,country):
     flightDetails_label = Label(window, text=flightDetails)
     #WeatherDetails_label = Label(window, text=weather_function)
     WeatherDetails_label = Label(window, text=weather_function)
-    save = Button(window, text="save information", command=lambda: encryptdata)
+    save = Button(window, text="save information", command=lambda: hashdata(flightDetails_label,WeatherDetails_label))
 
     for pack_ in (flightDetails_label,WeatherDetails_label, save):
         pack_.pack()
@@ -99,9 +98,41 @@ def login_window():
 #country = "england"  # user input
 #weather(api_key, country,0)  # calls the function
 
-def encryptdata(data):
-    hashdata(data)
+def hashdata(flightdetails, weatherdetails):
+    import random
+    dict = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]
+    newword = ""
+    for x in range(len(flightdetails)):
+        newword += random.choice(dict)
+    try:
+        file = open("data.txt", "a")
+        file2 = open("Uncrypted data.txt", "a")
+        try:
+            file.write("\n" + newword)
+            file2.write("\n" + flightdetails)
+        except:
+            print("something went wrong")
+        finally:
+            file.close()
+            file2.close()
+    except:
+        print("something went wrong")
 
+    for x in range(len(weatherdetails)):
+        newword += random.choice(dict)
+    try:
+        file = open("data.txt", "a")
+        file2 = open("Uncrypted data.txt", "a")
+        try:
+            file.write("\n" + newword)
+            file2.write("\n" + weatherdetails)
+        except:
+            print("something went wrong")
+        finally:
+            file.close()
+            file2.close()
+    except:
+        print("something went wrong")
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
