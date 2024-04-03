@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import *
-#from PlaneTracker_2 import planeInfo
-from LoginAuthenticationSystem import *
 import requests
 import folium
 import paho.mqtt.client as paho
@@ -94,10 +92,6 @@ def login_window():
     # Run the main event loop
     root.mainloop()
 
-#api_key = 'a90c4182b3d6f0099ca68e53d0b06386'  # api key
-#country = "england"  # user input
-#weather(api_key, country,0)  # calls the function
-
 def hashdata(flightdetails, weatherdetails):
     import random
     dict = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]
@@ -154,7 +148,8 @@ def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
 
 
-client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv5)
+#client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv5)
+client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv5, callback_api_version=1)
 client.on_connect = on_connect
 
 client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
@@ -230,7 +225,7 @@ login_window = login_window()
 window = tk.Tk()
 window.geometry("1280x720")
 
-
-plane_tracking_labels(flight_data,"England")
+country = input("Enter the name of the country: ")
+plane_tracking_labels(flight_data,country)
 
 window.mainloop()
