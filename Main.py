@@ -1,62 +1,146 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import *
+#from PlaneTracker_2 import planeInfo
+from EncryptUnecryptData import *
+from LoginAuthenticationSystem import *
 import requests
 import folium
-import paho.mqtt.client as mqtt
-import json
+import paho.mqtt.client as paho
+from paho import mqtt
 
-# MQTT Configuration
-broker_address = "mqtt.example.com"
-broker_port = 1883
-username = "your_username"
-password = "your_password"
-auth_topic = "plane/auth"
-tracking_topic = "plane/tracking"
 
-# Function to handle connection to MQTT broker
-def on_connect(client, userdata, flags, rc):
-    print("Connected to MQTT broker with result code " + str(rc))
-    # Subscribe to topics
-    client.subscribe(auth_topic)
-    client.subscribe(tracking_topic)
+def plane_tracking_labels(flightDetails,country):
+    api_key = 'a90c4182b3d6f0099ca68e53d0b06386'  # api key
+    weather_function = weather(api_key, country)  # calls the function
 
-# Function to handle receiving messages from MQTT broker
-def on_message(client, userdata, msg):
-    print("Received message: " + msg.topic + " " + str(msg.payload.decode()))
-    # Process message based on topic
-    if msg.topic == auth_topic:
-        handle_authorization(msg.payload)
-    elif msg.topic == tracking_topic:
-        handle_tracking(msg.payload)
+    flightDetails_label = Label(window, text=flightDetails)
+    #WeatherDetails_label = Label(window, text=weather_function)
+    WeatherDetails_label = Label(window, text=weather_function)
+    save = Button(window, text="save information", command=lambda: encryptdata)
 
-# Function to handle plane authorization
-def handle_authorization(payload):
-    data = json.loads(payload)
-    if data["authorized"]:
-        print("Plane {} authorized for flight.".format(data["plane_id"]))
+    for pack_ in (flightDetails_label,WeatherDetails_label, save):
+        pack_.pack()
+
+def weather(api_key, country):
+    base_url = 'http://api.openweathermap.org/data/2.5/weather'  # url for the OpenWeatherMap api
+
+    # parameters for the api request
+    params = {
+        'q': country,  # name of country
+        'appid': api_key,  # api key
+        'units': 'metric'  # units of the temp
+    }
+
+    # Make a GET request to the API
+    response = requests.get(base_url, params=params)  # request to the API
+
+    if response.status_code == 200:  # checks to see if the request was successful
+        weatherData = response.json()  # Parse the JSON response
+
+        # relevant weather information
+        cityName = weatherData['name']
+        temperature = weatherData['main']['temp']
+        weatherDescription = weatherData['weather'][0]['description']
+
+        cn = f"Weather in {cityName}:"
+        tp = f"Temperature: {temperature}°C"
+        wd = f"Description: {weatherDescription}"
+
+        #return weatherData
+        return cn,tp,wd
+
+        # weather info
+        print(f"Weather in {cityName}:")
+        print(f"Temperature: {temperature}°C")
+        print(f"Description: {weatherDescription}")
     else:
-        print("Unauthorized access for plane {}.".format(data["plane_id"]))
+        print(
+            f"Failed to retrieve weather data. Status Code: {response.status_code}")  # fail message if the code doesnt work.
+        print(response.text)
 
-# Function to handle plane tracking
-def handle_tracking(payload):
-    data = json.loads(payload)
-    print("Plane {} current location: Latitude {}, Longitude {}".format(data["plane_id"], data["latitude"], data["longitude"]))
+def login(username_entry,password_entry):
+    username = username_entry.get()
+    password = password_entry.get()
 
-# Function to open MQTT client
-def open_mqtt_client():
-    # Initialize MQTT client
-    client = mqtt.Client()
-    client.username_pw_set(username, password)
-    client.on_connect = on_connect
-    client.on_message = on_message
+    # Check if username and password match
+    if username == "admin" and password == "admin123":
+        messagebox.showinfo("Login Successful", "Welcome, Admin!")
+        root.destroy()
+        #open_mqtt_client()  # Open MQTT client window
+    else:
+        messagebox.showerror("Login Failed", "Invalid username or password")
 
-    # Connect to MQTT broker
-    client.connect(broker_address, broker_port)
+def login_window():
+    # Create main window
+    global root
+    root = tk.Tk()
+    root.title("Login")
 
-    # Start the MQTT client loop
-    client.loop_start()
+    # Create username label and entry
+    username_label = tk.Label(root, text="Username:")
+    username_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+    username_entry = tk.Entry(root)
+    username_entry.grid(row=0, column=1, padx=5, pady=5)
 
-    # Create MQTT client window (add your GUI code here)
+    # Create password label and entry
+    password_label = tk.Label(root, text="Password:")
+    password_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+    password_entry = tk.Entry(root, show="*")
+    password_entry.grid(row=1, column=1, padx=5, pady=5)
+
+    # Create login button
+    login_button = tk.Button(root, text="Login", command=lambda: login(username_entry,password_entry))
+    login_button.grid(row=2, column=0, columnspan=2, padx=5, pady=5)
+
+    # Run the main event loop
+    root.mainloop()
+
+#api_key = 'a90c4182b3d6f0099ca68e53d0b06386'  # api key
+#country = "england"  # user input
+#weather(api_key, country,0)  # calls the function
+
+def encryptdata(data):
+    hashdata(data)
+
+
+# setting callbacks for different events to see if it works, print the message etc.
+def on_connect(client, userdata, flags, rc, properties=None):
+    print("CONNACK received with code %s." % rc)
+
+
+# with this callback you can see if your publish was successful
+def on_publish(client, userdata, mid, properties=None):
+    print("mid: " + str(mid))
+
+
+# print which topic was subscribed to
+def on_subscribe(client, userdata, mid, granted_qos, properties=None):
+    print("Subscribed: " + str(mid) + " " + str(granted_qos))
+
+
+# print message, useful for checking if it was successful
+def on_message(client, userdata, msg):
+    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+
+
+client = paho.Client(client_id="", userdata=None, protocol=paho.MQTTv5)
+client.on_connect = on_connect
+
+client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
+
+# Client Username and Password
+client.username_pw_set("AirControl", "Password123")
+# Connect to HiveMQ Cloud on port 8883 (default for MQTT)
+client.connect("3304243d6499474ea584cbe3d25c4102.s2.eu.hivemq.cloud", 8883)
+
+# setting callbacks, use separate functions like above for better visibility
+client.on_subscribe = on_subscribe
+client.on_message = on_message
+client.on_publish = on_publish
+
+# subscribe to all topics of encyclopedia by using the wildcard "#"
+client.subscribe("#", qos=1)
+
 
 def planeInfo():
     # Aviation Stack API key
@@ -87,7 +171,8 @@ def planeInfo():
 
             # Add markers for the flight track
             for point in flight_track['data']:
-                folium.Marker(location=[point['latitude'], point['longitude']], popup=f"Altitude: {point['altitude']}", icon=folium.Icon(color='blue')).add_to(my_map)
+                folium.Marker(location=[point['latitude'], point['longitude']], popup=f"Altitude: {point['altitude']}",
+                              icon=folium.Icon(color='blue')).add_to(my_map)
 
             # Save the map to an HTML file or display it
             my_map.save('flight_track_map.html')
@@ -101,51 +186,20 @@ def planeInfo():
 
     return flight_iata_code, flight_data
 
-def weather(api_key, country):
-    base_url = 'http://api.openweathermap.org/data/2.5/weather'
-    params = {
-        'q': country,
-        'appid': api_key,
-        'units': 'metric'
-    }
 
-    response = requests.get(base_url, params=params)
-    
-    if response.status_code == 200:
-        weatherData = response.json()
-        cityName = weatherData['name']
-        temperature = weatherData['main']['temp']
-        weatherDescription = weatherData['weather'][0]['description']
-        
-        print(f"Weather in {cityName}:")
-        print(f"Temperature: {temperature}°C")
-        print(f"Description: {weatherDescription}")
-    else:
-        print(f"Failed to retrieve weather data. Status Code: {response.status_code}")
-        print(response.text)
+flight_iata_code, flight_data = planeInfo()
 
-def login():
-    username = login_window.username_entry.get()
-    password = login_window.password_entry.get()
+client.publish(f'plane_info/{flight_iata_code}', payload=str(flight_data), qos=1)
 
-    if username == "admin" and password == "admin123":
-        messagebox.showinfo("Login Successful", "Welcome, Admin!")
-        open_mqtt_client()
-    else:
-        messagebox.showerror("Login Failed", "Invalid username or password")
+client.loop_forever()
 
-# Main GUI window
+
+#create windows
+login_window = login_window()
 window = tk.Tk()
 window.geometry("1280x720")
-window.title("Flight Information")
 
-# Example flight information
-# Replace these placeholders with actual flight information
-planeInfo()
 
-# Example weather information
-# Replace "England" with the desired country
-weather("a90c4182b3d6f0099ca68e53d0b06386", "England")
+plane_tracking_labels(flight_data,"England")
 
-# Run the main event loop
 window.mainloop()
