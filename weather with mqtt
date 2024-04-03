@@ -37,13 +37,11 @@ def weather(api_key, country):
         'units': 'metric' # the units the temp is displayed in
     }
     response = requests.get(base_url, params=params)
-
-    if response.status_code == 200:
-        weather_data = response.json()
-        cityName = weatherData['name']
-        temperature = weatherData['main']['temp']
-        weatherDescription = weatherDdata['weather'][0]['description']
-
+    if response.status_code == 200: 
+        weather_data = response.json() #parses json response from the api
+        cityName = weatherData['name'] # finds out the city/ country name
+        temperature = weatherData['main']['temp']# finds out the temp in the city/country
+        weatherDescription = weatherDdata['weather'][0]['description'] # finds weather description
         # Construct weather information string
         weather_info = f"Weather in {cityName}: Temperature: {temperature}°C, Description: {weatherDescription}"
 
