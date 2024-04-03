@@ -1,3 +1,4 @@
+import requests
 
 def planeInfo():  
     # Aviation Stack API key
@@ -5,7 +6,7 @@ def planeInfo():
     base_url = 'http://api.aviationstack.com/v1/flights'
 
     # Flight IATA code
-    flight_iata_code = 'EK2'
+    flight_iata_code = 'EK22'
 
     # Make a request to get flight data
     params = {'access_key': api_key, 'flight_iata': flight_iata_code}
