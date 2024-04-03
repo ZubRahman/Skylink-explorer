@@ -45,8 +45,8 @@ def weather(api_key, country):
         # Construct weather information string
         weather_info = f"Weather in {cityName}: Temperature: {temperature}°C, Description: {weatherDescription}"
 
-        # Publish weather information to MQTT topic
-        client.publish("weather_info", weather_info)
+     
+        client.publish("weather_info", weather_info) # Publish weather information to MQTT topic
 
         print("Weather information published to MQTT topic 'weather_info'")
     else:
