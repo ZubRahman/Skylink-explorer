@@ -4,8 +4,6 @@ import requests
 import folium
 import paho.mqtt.client as mqtt
 import json
-from EncryptUnecryptData import encryptdata
-from LoginAuthenticationSystem import login_window
 
 # MQTT Configuration
 broker_address = "mqtt.example.com"
@@ -136,82 +134,18 @@ def login():
     else:
         messagebox.showerror("Login Failed", "Invalid username or password")
 
-def plane_tracking_labels(flightdate, flightstatus, departure, airport, timezone, terminal, gate, delay, scheduled, estimated, arrivaldestination, timezone2, terminal2, gate2):
-    flight_date = tk.Label(window, text=flightdate)
-    flight_date.pack()
-
-    flightstatus_label = tk.Label(window, text=flightstatus)
-    flightstatus_label.pack()
-
-    departure_label = tk.Label(window, text=departure)
-    departure_label.pack()
-
-    airport_label = tk.Label(window, text=airport)
-    airport_label.pack()
-
-    timezone_label = tk.Label(window, text=timezone)
-    timezone_label.pack()
-
-    terminal_label = tk.Label(window, text=terminal)
-    terminal_label.pack()
-
-    gate_label = tk.Label(window, text=gate)
-    gate_label.pack()
-
-    delay_label = tk.Label(window, text=delay)
-    delay_label.pack()
-
-    scheduled_label = tk.Label(window, text=scheduled)
-    scheduled_label.pack()
-
-    estimated_label = tk.Label(window, text=estimated)
-    estimated_label.pack()
-
-    arrival_destination_label = tk.Label(window, text=arrivaldestination)
-    arrival_destination_label.pack()
-
-    arrival_ = tk.Label(window, text="arrival :")
-    arrival_.pack()
-
-    timezone2_label = tk.Label(window, text=timezone2)
-    timezone2_label.pack()
-
-    terminal2_label = tk.Label(window, text=terminal2)
-    terminal2_label.pack()
-
-    gate2_label = tk.Label(window, text=gate2)
-    gate2_label.pack()
-
-def weather_labels(country):
-    api_key = 'a90c4182b3d6f0099ca68e53d0b06386'
-    country = country
-
-    blank = tk.Label(window, text="")
-    blank.pack()
-
-    country_label = tk.Label(window, text=f"Weather in {country}:")
-    country_label.pack()
-
-    Temperature_label = tk.Label(window, text=f"Temperature: {temperature} °C ")
-    Temperature_label.pack()
-
-    Description_label = tk.Label(window, text=f"Description: {weatherDescription}")
-    Description_label.pack()
-
-    encryptdata(f"Weather in {country}:")
-    encryptdata(f"Temperature: {temperature} °C ")
-    encryptdata(f"Description: {weatherDescription}")
-
-    save_button = tk.Button(window, text="Save Information", command=lambda: encryptdata)
-    save_button.pack()
-
 # Main GUI window
 window = tk.Tk()
 window.geometry("1280x720")
 window.title("Flight Information")
 
+# Example flight information
+# Replace these placeholders with actual flight information
+planeInfo()
+
 # Example weather information
-weather_labels("England")
+# Replace "England" with the desired country
+weather("a90c4182b3d6f0099ca68e53d0b06386", "England")
 
 # Run the main event loop
 window.mainloop()
