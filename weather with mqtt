@@ -32,9 +32,9 @@ client.connect("3304243d6499474ea584cbe3d25c4102.s2.eu.hivemq.cloud", 8883)
 def get_weather(api_key, country):
     base_url = 'http://api.openweathermap.org/data/2.5/weather'
     params = {
-        'q': country,
-        'appid': api_key,
-        'units': 'metric'
+        'q': country, # sets the country of destination
+        'appid': api_key, # the api key that is used
+        'units': 'metric' # the units the temp is displayed in
     }
     response = requests.get(base_url, params=params)
 
