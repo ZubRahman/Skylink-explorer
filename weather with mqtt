@@ -40,12 +40,12 @@ def weather(api_key, country):
 
     if response.status_code == 200:
         weather_data = response.json()
-        city_name = weather_data['name']
-        temperature = weather_data['main']['temp']
-        weather_description = weather_data['weather'][0]['description']
+        cityName = weatherData['name']
+        temperature = weatherData['main']['temp']
+        weatherDescription = weatherDdata['weather'][0]['description']
 
         # Construct weather information string
-        weather_info = f"Weather in {city_name}: Temperature: {temperature}°C, Description: {weather_description}"
+        weather_info = f"Weather in {cityName}: Temperature: {temperature}°C, Description: {weatherDescription}"
 
         # Publish weather information to MQTT topic
         client.publish("weather_info", weather_info)
