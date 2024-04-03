@@ -210,10 +210,6 @@ window = tk.Tk()
 window.geometry("1280x720")
 window.title("Flight Information")
 
-# Example flight information
-plane_tracking_labels("2024-04-01", "Scheduled", "Departure:", "Airport: Heathrow", "Timezone: Europe/London", "Terminal: 3", "Gate : 7", "Delay : 76",
-                      "Scheduled: 2024-04-01T14:20:00+00:00", "Estimated: 2024-04-01T14:20:00+00:00", "Airport: Dubai", "Timezone: Asia/Dubai", "Terminal: 3", "Gate: None")
-
 # Example weather information
 weather_labels("England")
 
