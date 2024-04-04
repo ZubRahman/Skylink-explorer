@@ -2,8 +2,11 @@ import tkinter as tk
 from tkinter import *
 import requests
 import folium
+from tkinter import messagebox
+import json
 import paho.mqtt.client as paho
 from paho import mqtt
+
 
 
 def plane_tracking_labels(flightDetails,country):
@@ -63,7 +66,6 @@ def login(username_entry,password_entry):
     if username == "admin" and password == "admin123":
         messagebox.showinfo("Login Successful", "Welcome, Admin!")
         root.destroy()
-        #open_mqtt_client()  # Open MQTT client window
     else:
         messagebox.showerror("Login Failed", "Invalid username or password")
 
@@ -227,5 +229,4 @@ window.geometry("1280x720")
 
 country = input("Enter the name of the country: ")
 plane_tracking_labels(flight_data,country)
-
 window.mainloop()
