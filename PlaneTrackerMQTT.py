@@ -43,7 +43,7 @@ def planeInfo():
     base_url = 'http://api.aviationstack.com/v1/flights'
 
     # Flight IATA code
-    flight_iata_code = 'UA951'
+    flight_iata_code = 'LH519'
 
     # Make a request to get flight data
     params = {'access_key': api_key, 'flight_iata': flight_iata_code}
