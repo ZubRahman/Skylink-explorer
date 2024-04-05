@@ -1,10 +1,8 @@
 import requests
-import folium  # You need to install folium using pip
 
-def planeInfo():
+def planeInfo():  
     # Aviation Stack API key
     api_key = '6028486d33c86158f4d7913afe8931d0'
- 
     base_url = 'http://api.aviationstack.com/v1/flights'
 
     # Flight IATA code
@@ -33,16 +31,18 @@ def planeInfo():
             for point in flight_track['data']:
                 folium.Marker(location=[point['latitude'], point['longitude']], popup=f"Altitude: {point['altitude']}", icon=folium.Icon(color='blue')).add_to(my_map)
 
-            # Save the map to an HTML file or display it
+        # Save the map to an HTML file or display it
             my_map.save('flight_track_map.html')
             print("Flight track map saved to 'flight_track_map.html'")
-
+    
         except KeyError:
             print("Flight track information not found in the response.")
     else:
         print(f"Failed to retrieve flight data. Status Code: {response.status_code}")
         print(response.text)
-
+    
     return flight_iata_code, flight_data
 
 flight_iata_code, flight_data = planeInfo()
+
+client.publish(f'plane_info/{flight_iata_code}', payload=str(flight_data), qos=1)
